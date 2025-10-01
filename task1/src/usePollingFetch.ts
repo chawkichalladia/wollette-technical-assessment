@@ -11,8 +11,11 @@ export const usePollingFetch = <T>({ url, interval }: UsePollingFetchProps) => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    // a flag to check if the component is still mounted
     let isMounted = true;
+    // to track the interval created if we opted for the polling behavior
     let intervalId: number | undefined;
+    // to cancel current request when useEffect triggers again
     const abortController = new AbortController();
 
     const fetchData = async () => {
@@ -22,23 +25,32 @@ export const usePollingFetch = <T>({ url, interval }: UsePollingFetchProps) => {
 
         const response = await fetch(url, { signal: abortController.signal });
 
-        const data = (await response.json()) as T;
+        const responseData = (await response.json()) as T;
 
-        if (isMounted) setData(data);
+        // check if the component is still mounted before updating the state
+        if (isMounted) setData(responseData);
       } catch (error) {
         console.error(error);
+        // check if the component is still mounted before updating the state
         if (isMounted) setError(true);
       } finally {
+        // check if the component is still mounted before updating the state
         if (isMounted) setIsLoading(false);
       }
     };
 
     if (interval === undefined) {
+      // fetch data once if no interval is provided
       fetchData();
     } else {
+      // fetch data periodically if interval provided
       intervalId = setInterval(fetchData, interval);
     }
 
+    // cleanup behavior:
+    // set the isMounted flag to false when the component unmounts
+    // cancel any ongoing requests
+    // clear the interval to prevent further requests
     return () => {
       clearInterval(intervalId);
       isMounted = false;
