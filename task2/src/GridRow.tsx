@@ -5,7 +5,6 @@ interface GridRowProps {
 }
 
 const GridRow = memo(({ cells }: GridRowProps) => {
-  console.warn("GridRow");
   return (
     <div
       style={{

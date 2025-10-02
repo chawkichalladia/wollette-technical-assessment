@@ -12,6 +12,7 @@ export const useGridData = <T>({ apiUrl }: UseGridDataProps) => {
   // useCallback creates a new reference when the dependencies change, in this case apiUrl
   // this helps useEffect to only trigger when the reference for the function changes
   // without useCallback, the function will have a new reference for each time this hook in triggered inside the component
+  // additional notes: The useCallback is used for the sake of the task given. In a real world scenario, we don't computationally heavy operations that would make the additional overhead of useCallback justified.
   const fetchData = useCallback(async () => {
     if (!apiUrl) return;
 
